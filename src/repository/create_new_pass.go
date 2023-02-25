@@ -1,42 +1,28 @@
 package repository
 
 import (
-	"time"
-
 	infra "github.com/IcaroSilvaFK/password-generator-api/src/infra/database"
 	"github.com/google/uuid"
 )
 
 type Model struct {
-	ID        string    `json:"id" gorm:"primaryKey"`
-	PASS      string    `json:"pass"`
-	CreatedAt time.Time `json:"created_at"`
+	ID   string `json:"id" gorm:"primaryKey"`
+	PASS string `json:"pass"`
 }
 
-func NewPass(pass string) {
+func NewPass(pass string) Model {
 	passCreated := Model{
-		PASS:      pass,
-		CreatedAt: time.Now(),
-		ID:        uuid.NewString(),
+		ID:   uuid.NewString(),
+		PASS: pass,
 	}
 	passCreated.Save()
-}
 
-func FindAll() []Model {
-
-	var allPass []Model
-
-	db := infra.NewDatabase()
-
-	db.Select("*").Find(&allPass)
-
-	return allPass
+	return passCreated
 }
 
 func (p Model) Save() {
 
 	db := infra.NewDatabase()
 
-	db.Create(&p)
-
+	db.Debug().Table("pass").Select("id", "pass").Create(&p)
 }

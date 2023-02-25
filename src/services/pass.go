@@ -8,34 +8,55 @@ import (
 	"github.com/google/uuid"
 )
 
-func NewPass(pass string) (string, error) {
+type PassService struct{}
+
+type CreateInBatchStructure struct {
+	ID   string
+	PASS string
+}
+
+func NewPassService() *PassService {
+	return &PassService{}
+}
+
+func (p PassService) NewPass(pass string) (repository.Model, error) {
 
 	hash, err := methods.Hash(pass)
 
-	repository.NewPass(pass)
+	passCreated := repository.NewPass(hash)
 
 	if err != nil {
-		return "", err
+		return repository.Model{}, err
 	}
 
-	return hash, nil
+	return passCreated, nil
 }
 
-func RandomPass(quantity int) ([]string, error) {
+func (p PassService) FindAllPass() []repository.Model {
+	res := repository.FindAll()
 
-	var hashArr []string
+	return res
+}
+
+func (p PassService) RandomPass(quantity int) ([]repository.CreateInBatchPassType, error) {
+
+	var hashArr []repository.CreateInBatchPassType
 
 	for i := 0; i < quantity; i++ {
 		uu := uuid.NewString()
-
-		hash, err := NewPass(uu)
+		hash, err := methods.Hash(uu)
 
 		if err != nil {
 			log.Fatal(err)
-			return nil, err
 		}
-		hashArr = append(hashArr, hash)
+
+		hashArr = append(hashArr, repository.CreateInBatchPassType{
+			ID:   uu,
+			PASS: hash,
+		})
 	}
+
+	repository.CreateInBatchPass(hashArr, quantity)
 
 	return hashArr, nil
 }
