@@ -19,7 +19,7 @@ func main() {
 	app := gin.Default()
 
 	app.Use(cors.Default())
-	router := app.Group("het/api/_v1")
+	router := app.Group("/api/_v1")
 
 	routes.ApplicationRoutes(router)
 
