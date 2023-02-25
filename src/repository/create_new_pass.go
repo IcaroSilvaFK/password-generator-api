@@ -22,6 +22,17 @@ func NewPass(pass string) {
 	passCreated.Save()
 }
 
+func FindAll() []Model {
+
+	var allPass []Model
+
+	db := infra.NewDatabase()
+
+	db.Select("*").Find(&allPass)
+
+	return allPass
+}
+
 func (p Model) Save() {
 
 	db := infra.NewDatabase()
